@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Working program</title>
+
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/b.."
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen"/>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container-fluid">
+        <!-- Название компании и кнопка, которая отображается для мобильных устройств группируются для лучшего отображения при свертывании -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span> <span
+                    class="icon-bar"></span> <span class="icon-bar"></span> <span
+                    class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" th:href="@{/home}">Диплом</a>
+        </div>
+
+        <!-- Группируем ссылки, формы, выпадающее меню и прочие элементы -->
+        <div class="collapse navbar-collapse"
+             id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="#">Новости</a></li>
+                <li sec:authorize="hasRole('ROLE_USER')"><a th:href="@{/working-programs}">Рабочие программы</a></li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{/add-user}">Добавить пользователя</a></li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Поиск"/>
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown"><a href="#" class="dropdown-toggle" sec:authentication="name"
+                                        data-toggle="dropdown"><b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/personal}">Личный кабинет</a></li>
+                        <li><a th:href="@{/edit-personal}">Редактировать личный кабинет</a></li>
+                        <li sec:authorize="hasRole('ROLE_USER')"><a th:href="@{/create-wp}">Создать рабочую
+                            программу</a></li>
+                        <li class="divider"></li>
+                        <li><a th:href="@{/logout}">Выход</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="well well-lg">
+        <div class="page-header"><h3 th:text="${workingProgram.name}+' '+${workingProgram.discipline.name}"></h3></div>
+        <h4>Цели и задачи освоения дисциплины</h4>
+        <div th:text="${workingProgram.goal}"></div>
+        <h4>Место дисциплины в структуре ООП магистратуры</h4>
+        <div th:text="${workingProgram.discipline_place}"></div>
+        <h4>В результате изучения дисциплины студент должен знать:</h4>
+        <div th:text="${workingProgram.know}"></div>
+        <h4>уметь:</h4>
+        <div th:text="${workingProgram.can}"></div>
+        <h4>владеть навыками:</h4>
+        <div th:text="${workingProgram.be_skilled}"></div>
+        <div th:text="'Часов: '+${workingProgram.hours}"></div>
+        <div th:text="'Самостоятельна работа: '+${workingProgram.self_study}"></div>
+        <div th:text="'Всего часов: '+${workingProgram.all_hours}"></div>
+        <div><h4>Структура дисциплины по видам учебной работы, соотношение тем и формируемых компетенций</h4></div>
+        <div th:each="disciplineStructure: ${workingProgram.disciplineStructureList}">
+            <div th:text="'Тема: '+${disciplineStructure.theme}"></div>
+            <div th:text="'Неделя семестра: '+${disciplineStructure.semester_week}"></div>
+            <div th:text="'Лекций: '+${disciplineStructure.lecture}"></div>
+            <div th:text="'Практических занятий: '+${disciplineStructure.practical}"></div>
+            <div th:text="'Самостоятельная работа студента: '+${disciplineStructure.srs}"></div>
+            <div th:text="'Лабораторные: '+${disciplineStructure.lab}"></div>
+            <div th:text="'Количество компетенций: '+${disciplineStructure.competence_number}"></div>
+            <div th:text="'Компетенции: '+${disciplineStructure.competenceList}"></div>
+            <div th:text="'Форма контроля: '+${disciplineStructure.controlForm.name}"></div>
+        </div>
+        <div><h4>Содержание лекционных занятий</h4></div>
+        <div th:each="lecturesContent: ${workingProgram.lecturesContentList}">
+            <div th:text="'Тема: '+${lecturesContent.theme}"></div>
+            <div th:text="'Содержание: '+${lecturesContent.content}"></div>
+        </div>
+        <div><h4>Программа практических / семинарских занятий</h4></div>
+        <div th:each="practicalTrainingProgram: ${workingProgram.practicalTrainingProgramList}">
+            <div th:text="'Тема: '+${practicalTrainingProgram.theme}"></div>
+            <div th:text="'Практическое занятие: '+${practicalTrainingProgram.practical_lesson}"></div>
+        </div>
+        <div><h4>Программа лабораторных занятий</h4></div>
+        <div th:each="labPracticalProgram: ${workingProgram.labPracticalProgramList}">
+            <div th:text="'Тема: '+${labPracticalProgram.theme}"></div>
+            <div th:text="'Лабораторная: '+${labPracticalProgram.lab}"></div>
+        </div>
+        <h4>Образовательные технологии</h4>
+        <div th:text="${workingProgram.edu_technologies}"></div>
+        <div><h4>Программа самостоятельной работы студентов</h4></div>
+        <div th:each="selfStudyProgram: ${workingProgram.SelfStudyProgramList}">
+            <div th:text="'Код компетенции: '+${selfStudyProgram.competence_code}"></div>
+            <div th:text="'Тема: '+${selfStudyProgram.theme}"></div>
+            <div th:text="'Материалы: '+${selfStudyProgram.materials}"></div>
+            <div th:text="'Форма контроля: '+${selfStudyProgram.srsForm.name}"></div>
+            <div th:text="'Вид контроля: '+${selfStudyProgram.srsKind}"></div>
+        </div>
+        <div><h4>Содержание СРС</h4></div>
+        <div th:each="srsContent: ${workingProgram.srsContentList}">
+            <div th:text="'Тема: '+${srsContent.theme}"></div>
+        </div>
+        <div><h4>График контроля самостоятельной работы студента: </h4></div>
+        <div th:each="srsControlGraph: ${workingProgram.srsControlGraphList}">
+            <div th:text="'Неделя: '+${srsControlGraph.week}"></div>
+            <div th:text="'Форма контроля: '+${srsControlGraph.srsControlForm.name}"></div>
+        </div>
+        <div><h4>Оценочные средства для текущего контроля успеваемости, промежуточной аттестации по итогам освоения
+            дисциплины</h4></div>
+        <div th:each="disciplineAssessmentTool: ${workingProgram.disciplineAssessmentTools}">
+            <div th:text="'Тема: '+${disciplineAssessmentTool.theme}"></div>
+            <div th:text="'Вопросы: '+${disciplineAssessmentTool.questions}"></div>
+            <div th:text="'Форма контроля: '+${disciplineAssessmentTool.progressControlForms}"></div>
+        </div>
+        <div><h4>Учебно-методическое и информационное обеспечение дисциплины</h4></div>
+        <div th:each="disciplineProvision: ${workingProgram.disciplineProvisionList}">
+            <div th:text="'Литература: '+${disciplineProvision.literature}"></div>
+            <div th:text="'Форма литературы: '+${disciplineProvision.literature_form}"></div>
+        </div>
+        <div><h4>Материально-техническое обеспечение дисциплины</h4></div>
+        <div th:each="classroomReq: ${workingProgram.classroomReqList}">
+            <div th:text="'Требования к аудитории: '+${classroomReq.requirements}"></div>
+            <div th:text="'Требования к оборудованию: '+${classroomReq.equipment_req}"></div>
+            <div th:text="'Количество: '+${classroomReq.count}"></div>
+        </div>
+        <div th:each="specialReq: ${workingProgram.specialReqList}">
+            <div th:text="'Требования: '+${specialReq.requirements}"></div>
+            <div th:text="'Количество: '+${specialReq.count}"></div>
+            <div th:text="'Требования к специализированному по: '+${specialReq.special_po_req}"></div>
+        </div>
+        <div><h4>Требования к расходным материалам: </h4></div>
+        <div th:each="consumablesReq: ${workingProgram.consumablesReqList}">
+            <div th:text="'Требования: '+${consumablesReq.requirements}"></div>
+            <div th:text="'Количество: '+${consumablesReq.count}"></div>
+            <div th:text="'Мера измерения: '+${consumablesReq.units}"></div>
+        </div>
+        <h4>Регламент утверждения рабочей программы дисциплины</h4>
+        <div th:text="'Разработчик рабочей программы: '+${workingProgram.user.name}"></div>
+        <div><h4>Экспертиза первого уровня</h4></div>
+        <div th:text="'Дата: '+${workingProgram.expertiseFirstLevel.date}"></div>
+        <div th:text="'Номер протокола: '+${workingProgram.expertiseFirstLevel.protocol_number}"></div>
+        <a th:href="@{|/downloadPDF/${workingProgram.id}|}">PDF</a>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"/>
+<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"/>
+</body>
+</html>

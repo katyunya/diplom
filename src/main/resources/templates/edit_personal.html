@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Working program</title>
+
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/b.."
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen" />
+    <link
+            th:href="@{/webjars/bootstrap-select/1.12.0/css/bootstrap-select.min.css}"
+            rel="stylesheet" media="screen" />
+</head>
+<body>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container-fluid">
+        <!-- Название компании и кнопка, которая отображается для мобильных устройств группируются для лучшего отображения при свертывании -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span> <span
+                    class="icon-bar"></span> <span class="icon-bar"></span> <span
+                    class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" th:href="@{/home}">Диплом</a>
+        </div>
+
+        <!-- Группируем ссылки, формы, выпадающее меню и прочие элементы -->
+        <div class="collapse navbar-collapse"
+             id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="#">Новости</a></li>
+                <li sec:authorize="hasRole('ROLE_USER')"><a th:href="@{/working-programs}">Рабочие программы</a></li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{/add-user}">Добавить пользователя</a></li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Поиск" />
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown"><a href="#" class="dropdown-toggle" sec:authentication="name"
+                                        data-toggle="dropdown"><b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/personal}">Личный кабинет</a></li>
+                        <li><a th:href="@{/edit-personal}">Редактировать личный кабинет</a></li>
+                        <li sec:authorize="hasRole('ROLE_USER')"><a th:href="@{/create-wp}">Создать рабочую программу</a></li>
+                        <li class="divider"></li>
+                        <li><a th:href="@{/logout}">Выход</a></li>
+                    </ul></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <form th:object="${user}" action="/edit-personal" method="post">
+        <input type="text" th:field="*{login}" hidden="hidden"/>
+        <input type="text" th:field="*{name}" class="form-control" placeholder="ФИО" required="" autofocus=""/>
+        <input type="password" th:field="*{password}"  class="form-control" placeholder="Пароль" required=""/>
+        <select sec:authorize="hasRole('ROLE_USER')" id="post" th:field="*{post}" class="selectpicker" title="Должность">
+            <option th:each="post : ${posts}" th:value="${post.id}"  th:text="${post.name}"></option>
+        </select>
+        <select sec:authorize="hasRole('ROLE_USER')" id="at" th:field="*{academicTitle}" class="selectpicker" title="Ученое звание">
+            <option th:each="at : ${academic_title}" th:value="${at.id}"  th:text="${at.name}"></option>
+        </select>
+        <select sec:authorize="hasRole('ROLE_USER')" id="degree" th:field="*{degrees}" class="selectpicker" title="Ученая степень">
+            <option th:each="degree : ${degrees}" th:value="${degree.id}"  th:text="${degree.name}"></option>
+        </select>
+        <select sec:authorize="hasRole('ROLE_USER')" id="cathedra" th:field="*{cathedra}" class="selectpicker" title="Кафедра">
+            <option th:each="cathedra : ${cathedraList}" th:value="${cathedra.id}"  th:text="${cathedra.name}"></option>
+        </select>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Редактировать</button>
+    </form>
+</div>
+
+<script th:src="@{/webjars/jquery/2.2.4/jquery.min.js}" />
+<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}" />
+
+<script th:src="@{/webjars/bootstrap-select/1.12.0/js/bootstrap-select.min.js}" />
+<script th:src="@{/webjars/bootstrap-select/1.12.0/js/i18n/defaults-*.min.js}" />
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Working program</title>
+
+    <link href="http://cdn.jsdelivr.net/webjars/bootstrap/3.3.4/css/b.."
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen"/>
+    <link
+            th:href="@{/webjars/bootstrap-select/1.12.0/css/bootstrap-select.min.css}"
+            rel="stylesheet" media="screen"/>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container-fluid">
+        <!-- Название компании и кнопка, которая отображается для мобильных устройств группируются для лучшего отображения при свертывании -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span> <span
+                    class="icon-bar"></span> <span class="icon-bar"></span> <span
+                    class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" th:href="@{/home}">Диплом</a>
+        </div>
+
+        <!-- Группируем ссылки, формы, выпадающее меню и прочие элементы -->
+        <div class="collapse navbar-collapse"
+             id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="#">Новости</a></li>
+                <li sec:authorize="hasRole('ROLE_USER')"><a th:href="@{/working-programs}">Рабочие программы</a></li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{/add-user}">Добавить пользователя</a></li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Поиск"/>
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown"><a href="#" class="dropdown-toggle" sec:authentication="name"
+                                        data-toggle="dropdown"><b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/personal}">Личный кабинет</a></li>
+                        <li><a th:href="@{/edit-personal}">Редактировать личный кабинет</a></li>
+                        <li sec:authorize="hasRole('ROLE_USER')"><a th:href="@{/create-wp}">Создать рабочую
+                            программу</a></li>
+                        <li class="divider"></li>
+                        <li><a th:href="@{/logout}">Выход</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <form th:object="${workingProgram}" action="/create-wp" method="post">
+        <input type="text" th:field="*{name}" class="form-control" placeholder="Название" required="" autofocus=""/>
+        <select id="discipline" th:field="*{discipline}" class="selectpicker" title="Дисциплина">
+            <option th:each="discipline : ${disciplineList}" th:value="${discipline.id}"
+                    th:text="${discipline.name}"></option>
+        </select>
+        <textarea th:field="*{goal}" class="form-control" placeholder="Цель освоения дисциплины" required=""/>
+        <textarea th:field="*{discipline_place}" class="form-control" placeholder="Место дисциплины в структуре ООП"
+                  required=""/>
+        <textarea th:field="*{know}" class="form-control" placeholder="Знать" required=""/>
+        <textarea th:field="*{can}" class="form-control" placeholder="Уметь" required=""/>
+        <textarea th:field="*{be_skilled}" class="form-control" placeholder="Владеть навыками" required=""/>
+        <textarea th:field="*{edu_technologies}" class="form-control" placeholder="Образовательные технологии"
+                  required=""/>
+        <textarea th:field="*{hours}" class="form-control" placeholder="Часов" required=""/>
+        <textarea th:field="*{self_study}" class="form-control" placeholder="Самостоятельная работа" required=""/>
+        <textarea th:field="*{all_hours}" class="form-control" placeholder="Всего часов" required=""/>
+
+        <!--Здесь должно быть много полей для добавления!!!-->
+
+        <label>Структура дисциплины</label>
+        <textarea th:field="*{disciplineTheme}" class="form-control" placeholder="Тема" required=""/>
+        <textarea th:field="*{semester_week}" class="form-control" placeholder="Неделя семестра" required=""/>
+        <input th:field="*{lecture}" name="lecture" id="lecture" class="form-control" placeholder="Лекционных занятий" type="number" min="1" max="34" step="1"/>
+        <input th:field="*{practical}" name="practical" id="practical" class="form-control" placeholder="Практических занятий" type="number" min="1" max="8" step="1"/>
+        <input th:field="*{labHours}" name="labHours" id="labHours" class="form-control" placeholder="Лабораторных занятий" type="number" min="1" max="8" step="1"/>
+        <input th:field="*{srs}" name="srs" id="srs" class="form-control" placeholder="Самостоятельная работа студента" type="number" min="1" max="52" step="1"/>
+        <textarea th:field="*{competence_number}" class="form-control" placeholder="Число компетенций" required=""/>
+        <select th:field="*{competenceList}" multiple="multiple" class="selectpicker" title="Компетенции">
+        <option  th:each="competence : ${competenceList}" th:value="${competence.id}"  th:text="${competence.name}"></option>
+        </select>
+        <select th:field="*{controlForm}" id="controlForm" class="selectpicker" title="Форма контроля">
+            <option th:each="controlForm : ${controlForms}" th:value="${controlForm.id}"
+                    th:text="${controlForm.name}"></option>
+        </select>
+
+        <br><label>Содержание лекционных занятий</label></br>
+        <textarea th:field="*{lecturesTheme}" class="form-control" placeholder="Тема" required=""/>
+        <textarea th:field="*{lecturesContent}" class="form-control" placeholder="Содержание" required=""/>
+
+        <label>Программа лабораторных занятий</label>
+        <textarea th:field="*{labTheme}" class="form-control" placeholder="Тема" required=""/>
+        <textarea th:field="*{lab}" class="form-control" placeholder="Лабораторная работа" required=""/>
+
+        <label>Программа практических занятий</label>
+        <textarea th:field="*{practicalTheme}" class="form-control" placeholder="Тема" required=""/>
+        <textarea th:field="*{practicalLesson}" class="form-control" placeholder="Практическое занятие" required=""/>
+
+
+        <label>Программа самостоятельной работы студентов</label>
+        <textarea th:field="*{competence_code}" class="form-control" placeholder="Код компетенции" required=""/>
+        <textarea th:field="*{selfStudyTheme}" class="form-control" placeholder="Тема" required=""/>
+        <textarea th:field="*{materials}" class="form-control" placeholder="Материалы" required=""/>
+        <select th:field="*{srsForm}" id="srsForm" class="selectpicker" title="Форма срс">
+            <option th:each="srsForm : ${srsForms}" th:value="${srsForm.id}" th:text="${srsForm.name}"></option>
+        </select>
+        <select th:field="*{srsKind}" id="srsKind" class="selectpicker" title="Вид срс">
+            <option th:each="srsKind : ${srsKindList}" th:value="${srsKind.id}" th:text="${srsKind.name}"></option>
+        </select>
+
+        <br><label>Содержание СРС</label></br>
+        <textarea th:field="*{srsTheme}" class="form-control" placeholder="Тема" required=""/>
+
+        <textarea th:field="*{srsWeek}" class="form-control" placeholder="Неделя семестра" required=""/>
+        <select th:field="*{srsControlForm}" id="srsControlForm" class="selectpicker" title="Вид контроля">
+            <option th:each="srsControlForm : ${srsControlForms}" th:value="${srsControlForm.id}"
+                    th:text="${srsControlForm.name}"></option>
+        </select>
+
+        <br><label>Оценочные средства для текущего контроля успеваемости</label></br>
+        <textarea th:field="*{assessmentToolsTheme}" class="form-control" placeholder="Тема" required=""/>
+        <textarea th:field="*{questions}" class="form-control" placeholder="Вопросы" required=""/>
+        <select th:field="*{progressControlForm}" id="progressControlForm" class="selectpicker" title="Вид контроля">
+            <option th:each="progressControlForm : ${progressControlForms}" th:value="${progressControlForm.id}"
+                    th:text="${progressControlForm.form}"></option>
+        </select>
+
+        <br><label>Учебно-методическое обеспечение дисциплины</label></br>
+        <textarea th:field="*{literature_form}" class="form-control" placeholder="Вид литературы" required=""/>
+        <textarea th:field="*{literature}" class="form-control" placeholder="Литература" required=""/>
+
+        <label>Материально-техническое обеспечение дисциплины</label>
+        <textarea th:field="*{classroomRequirements}" class="form-control" placeholder="Требования к аудитории"
+                  required=""/>
+        <textarea th:field="*{equipment_req}" class="form-control" placeholder="Требования к аудиторному оборудованию"
+                  required=""/>
+        <textarea th:field="*{classroomCount}" class="form-control" placeholder="Количество" required=""/>
+        <textarea th:field="*{specialRequirements}" class="form-control"
+                  placeholder="Требования к специализированному оборудованию" required=""/>
+        <textarea th:field="*{specialCount}" class="form-control" placeholder="Количество" required=""/>
+        <textarea th:field="*{special_po_req}" class="form-control" placeholder="Требования к специализированному ПО"
+                  required=""/>
+        <textarea th:field="*{consumablesRequirements}" class="form-control"
+                  placeholder="Требования к перечню и объему расходных материалов" required=""/>
+        <textarea th:field="*{comsumablesCount}" class="form-control" placeholder="Количество" required=""/>
+        <textarea th:field="*{units}" class="form-control" placeholder="Мера измерения" required=""/>
+
+        <br><label>Экспертиза первого уровня</label></br>
+        <textarea th:field="*{expertiseDate}" class="form-control" placeholder="Дата" required=""/>
+        <textarea th:field="*{protocol_number}" class="form-control" placeholder="Номер протокола" required=""/>
+        <select th:field="*{cathedra}" id="cathedra" class="selectpicker" title="Кафедра">
+            <option th:each="cathedra : ${cathedraList}" th:value="${cathedra.id}" th:text="${cathedra.name}"></option>
+        </select>
+
+        <button class="btn btn-primary btn-lg" type="submit">Создать</button>
+    </form>
+</div>
+
+<script th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"/>
+<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"/>
+
+<script th:src="@{/webjars/bootstrap-select/1.12.0/js/bootstrap-select.min.js}"/>
+<script th:src="@{/webjars/bootstrap-select/1.12.0/js/i18n/defaults-*.min.js}"/>
+
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css"/>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-*.min.js"></script>-->
+
+</body>
+</html>
