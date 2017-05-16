@@ -147,7 +147,7 @@
         <div><h4>Экспертиза первого уровня</h4></div>
         <div th:text="'Дата: '+${workingProgram.expertiseFirstLevel.date}"></div>
         <div th:text="'Номер протокола: '+${workingProgram.expertiseFirstLevel.protocol_number}"></div>
-        <a th:href="@{|/downloadPDF/${workingProgram.id}|}">PDF</a>
+        <a th:href="@{|/downloadPDF/${workingProgram.id}|}">Скачать PDF</a>
     </div>
 </div>
 
