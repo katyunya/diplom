@@ -4,6 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.wp.domain.*;
+import com.wp.pdfCreator.PdfCreator;
 import com.wp.pojo.UserEditForm;
 import com.wp.pojo.UserForm;
 import com.wp.pojo.WorkingProgramForm;
@@ -58,6 +59,8 @@ public class MainController {
     private ExpertiseFirstLevelRepository expertiseFirstLevelRepository;
     @Autowired
     private BasePlanRepository basePlanRepository;
+    @Autowired
+    private PdfCreator pdfCreator;
 
     @RequestMapping(value = "/login")
     public String login() {
@@ -318,18 +321,8 @@ public class MainController {
 
     @RequestMapping(value = "downloadPDF/{id}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> downloadPDF(@PathVariable("id") int id) throws DocumentException, IOException {
-        WorkingProgram workingProgram = workingProgramRepository.findById(id);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        Document document = new Document();
-        PdfWriter.getInstance(document, byteArrayOutputStream);
-        BaseFont bf = BaseFont.createFont("fonts/TimesNewRomanRegular.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED); //подключаем файл шрифта, который поддерживает кириллицу
-        Font font = new Font(bf);
-        document.open();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_PDF);
-        document.add(new Paragraph(workingProgram.toString(), font));
-        document.close();
-        byte[] pdfBytes = byteArrayOutputStream.toByteArray();
-        return new ResponseEntity<byte[]>(pdfBytes, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<byte[]>(pdfCreator.createPDF(id), httpHeaders, HttpStatus.OK);
     }
 }
